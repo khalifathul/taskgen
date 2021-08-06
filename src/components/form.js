@@ -47,7 +47,7 @@ class Form extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if(nextProps.editData.id !== prevState.editData){
-      return { editStatus: true, task_msg: nextProps.editData.task_msg }
+      return { editStatus: true }
     }else {
       return { editStatus: false }
     }
@@ -66,18 +66,18 @@ class Form extends React.Component {
 
   handleEdit(e){
     e.preventDefault();
-    const { task_msg, editId } = this.state;
+    const { task_msg, task_date, task_time, time_zone, editId } = this.state;
     const { editData } = this.props;
     const taskData = {
       "assigned_user": editData.assigned_user,
-      "task_date": editData.task_date,
-      "task_msg": task_msg,
-      "task_time": editData.task_time,
+      "task_date": isEmpty(task_date)?editData.task_date:task_date,
+      "task_msg": isEmpty(task_msg)?editData.task_msg:task_msg,
+      "task_time": isEmpty(task_time)?editData.task_time:task_time,
       "is_completed": 1,
-      "time_zone": editData.time_zone,
+      "time_zone": isEmpty(time_zone)?editData.time_zone:time_zone,
     }
     this.props.editTaskAction(taskData, editId).then(res => {
-      alert("Succesfully updated")
+      alert(res.task.data.message);
       this.setState({
         task_date: "",
         task_time: "",
@@ -108,7 +108,7 @@ class Form extends React.Component {
       "time_zone": timeZone,
     }
     this.props.addTaskAction(taskData).then(res => {
-      alert("Succesfully created")
+      alert(res.task.data.message);
       this.setState({
         task_date: "",
         task_time: "",
